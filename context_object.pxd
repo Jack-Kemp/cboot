@@ -7,21 +7,21 @@ cdef extern from "stdlib.h":
     void free (void* ptr)
 
 cdef extern from "sage/cboot/integral_decomp.h":
-    mpfr_t* simple_pole_case_c(long pole_order_max, mpfr_t base, mpfr_t pole_position, mpfr_t incomplete_gamma_factor, mp_prec_t prec)
-    mpfr_t* double_pole_case_c(long pole_order_max, mpfr_t base, mpfr_t pole_position, mpfr_t incomplete_gamma_factor, mp_prec_t prec)
+    mpfr_t* simple_pole_case_c(long pole_order_max, mpfr_t base, mpfr_t pole_position, mpfr_t incomplete_gamma_factor, mpfr_prec_t prec)
+    mpfr_t* double_pole_case_c(long pole_order_max, mpfr_t base, mpfr_t pole_position, mpfr_t incomplete_gamma_factor, mpfr_prec_t prec)
 
 cdef extern from "sage/cboot/partial_fraction.h":
-    mpfr_t* fast_partial_fraction_c(mpfr_t* pole_locations, int* double_or_single, int expected_result_length, mp_prec_t prec)
+    mpfr_t* fast_partial_fraction_c(mpfr_t* pole_locations, int* double_or_single, int expected_result_length, mpfr_prec_t prec)
    
 cdef extern from "sage/cboot/chol_and_inverse.h":
-    mpfr_t* mpfr_triangular_inverse(mpfr_t* A, int dim,mp_prec_t prec)
-    mpfr_t* mpfr_cholesky(mpfr_t* A, int dim,mp_prec_t prec) 
-    mpfr_t* form_anti_band(mpfr_t* ab_vector, int dim, mp_prec_t prec)
+    mpfr_t* mpfr_triangular_inverse(mpfr_t* A, int dim,mpfr_prec_t prec)
+    mpfr_t* mpfr_cholesky(mpfr_t* A, int dim,mpfr_prec_t prec) 
+    mpfr_t* form_anti_band(mpfr_t* ab_vector, int dim, mpfr_prec_t prec)
 
 cdef extern from "sage/cboot/context_variables.h":
     ctypedef struct cb_context:
         mpfr_t* rho_to_z_matrix
-    cb_context context_construct(long nMax, mp_prec_t prec, int Lambda)
+    cb_context context_construct(long nMax, mpfr_prec_t prec, int Lambda)
     void clear_cb_context(cb_context context)
 #
 #cdef class clevel_context:
@@ -30,7 +30,7 @@ cdef extern from "sage/cboot/context_variables.h":
 #
 cdef class cb_universal_context:
     cdef cb_context c_context
-    cdef public mp_prec_t precision
+    cdef public mpfr_prec_t precision
     cdef public RealField_class field 
     cdef public object Delta_Field
     cdef public object Delta

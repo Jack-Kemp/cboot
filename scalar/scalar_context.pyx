@@ -1,8 +1,8 @@
-import numpy as np 
+import numpy as np
 from sage.cboot.context_object cimport *
 from sage.cboot.context_object import SDP
 from sage.all import matrix, ZZ, Integer, cached_method
-include "sage/ext/interrupt.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 class k_poleData:
     """
@@ -176,7 +176,7 @@ cdef class scalar_cb_context_generic(cb_universal_context):
             res[i]=<RealNumber>(<RealField_class>self.field)._new()
 
             (<RealNumber>res[i])._parent=self.field
-            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mp_prec_t>self.precision)
+            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mpfr_prec_t>self.precision)
             mpfr_set(<mpfr_t>(<RealNumber>res[i]).value, _array[i],  MPFR_RNDN)
             mpfr_clear(_array[i])
             #(<RealNumber>res[i]).init=1 
@@ -464,7 +464,7 @@ def zzbar_anti_symm_to_xy_matrix(Lambda,field=RealField(400)):
     return result.transpose()
 
 cdef class scalar_cb_2d_context(scalar_cb_context_generic):
-    def __init__(self,int Lambda, mp_prec_t Prec, long nMax):
+    def __init__(self,int Lambda, mpfr_prec_t Prec, long nMax):
         scalar_cb_context_generic.__init__(self,Lambda, Prec, nMax,0)
         k_context=cb_universal_context(Lambda,Prec, nMax)
     def chiral_h_asymptotic(self,S):
@@ -475,7 +475,7 @@ cdef class scalar_cb_2d_context(scalar_cb_context_generic):
         for i in range(0,self.Lambda+1):
             res[i]=<RealNumber>(<RealField_class>self.field)._new()
             (<RealNumber>res[i])._parent=self.field
-            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mp_prec_t>self.precision)
+            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mpfr_prec_t>self.precision)
             mpfr_set(<mpfr_t>(<RealNumber>res[i]).value, _array[i],  MPFR_RNDN)
             mpfr_clear(_array[i])
             #(<RealNumber>res[i]).init=1 
@@ -493,7 +493,7 @@ cdef class scalar_cb_2d_context(scalar_cb_context_generic):
         for i in range(0,self.Lambda+1):
             res[i]=<RealNumber>(<RealField_class>self.field)._new() 
             (<RealNumber>res[i])._parent=self.field
-            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mp_prec_t>self.precision)
+            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mpfr_prec_t>self.precision)
             mpfr_set(<mpfr_t>(<RealNumber>res[i]).value, _array[i],  MPFR_RNDN)
             mpfr_clear(_array[i])
         return np.array(res) 
@@ -507,7 +507,7 @@ cdef class scalar_cb_2d_context(scalar_cb_context_generic):
         for i in range(0,self.Lambda+1):
             res[i]=<RealNumber>(<RealField_class>self.field)._new() 
             (<RealNumber>res[i])._parent=self.field
-            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mp_prec_t>self.precision)
+            mpfr_init2(<mpfr_t>(<RealNumber>res[i]).value,<mpfr_prec_t>self.precision)
             mpfr_set(<mpfr_t>(<RealNumber>res[i]).value, _array[i],  MPFR_RNDN)
             mpfr_clear(_array[i])
         return np.array(res) 
@@ -522,7 +522,7 @@ cdef class scalar_cb_2d_context(scalar_cb_context_generic):
 cdef class scalar_cb_4d_context(scalar_cb_context_generic):
     cdef public scalar_cb_2d_context k_context
     cdef public object zzbar_anti_symm_to_xy_matrix
-    def __init__(self,int Lambda, mp_prec_t Prec, long nMax):
+    def __init__(self,int Lambda, mpfr_prec_t Prec, long nMax):
         scalar_cb_context_generic.__init__(self,Lambda, Prec, nMax,1) 
         self.k_context=scalar_cb_2d_context(Lambda+1,Prec, nMax)
         self.epsilon=self.field(1)

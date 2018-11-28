@@ -1,10 +1,9 @@
 from sage.libs.mpfr cimport *
 from sage.rings.real_mpfr cimport * 
 import numpy as np 
-
 from sage.all import Matrix, is_square, sqrt
 cimport numpy as np
-from sage.functions.other import gamma 
+from sage.functions.gamma import gamma 
 from sage.rings.real_mpfr import RR
 import copy
 import re
@@ -89,9 +88,9 @@ cdef class cb_universal_context:
     precision, cutoff parameter Lambda, and the matrix representing
     the change variables, e.g. {z, z_bar}->(x,y) and r -> x.
     """
-    def __cinit__(self, int Lambda, mp_prec_t Prec, long nMax,*args,**kwargs):
+    def __cinit__(self, int Lambda, mpfr_prec_t Prec, long nMax,*args,**kwargs):
         self.c_context = <cb_context>context_construct(nMax,Prec,Lambda)
-        self.precision=<mp_prec_t>Prec
+        self.precision=<mpfr_prec_t>Prec
         self.field=<RealField_class>RealField(Prec)
         self.Delta_Field=self.field['Delta']
         self.Delta=self.Delta_Field('Delta')
@@ -104,11 +103,11 @@ cdef class cb_universal_context:
             for j in range(0,Lambda+1):
                 r=<RealNumber>(<RealField_class>self.field)._new()
                 r._parent=self.field
-                mpfr_init2(r.value,<mp_prec_t>Prec)
+                mpfr_init2(r.value,<mpfr_prec_t>Prec)
                 mpfr_set(r.value,<mpfr_t>self.c_context.rho_to_z_matrix[i*(Lambda+1)+j],MPFR_RNDN) 
                 self.rho_to_z_matrix[i][j]=r
 
-    def __init__(self, int Lambda, mp_prec_t Prec, long nMax,*args,**kwargs):
+    def __init__(self, int Lambda, mpfr_prec_t Prec, long nMax,*args,**kwargs):
 
         self.polynomial_vector_shift=np.vectorize(lambda x,shift:self.Delta_Field(x)(self.Delta + shift))
         self.rho=3-2*(self.field)(2).sqrt() 
@@ -478,7 +477,7 @@ cpdef fast_partial_fraction(pole_data,prec):
     free(result)
     return result_py
 
-cpdef simple_or_double_pole_integral(x_power_max,base,pole_position, order_of_pole, mp_prec_t prec):
+cpdef simple_or_double_pole_integral(x_power_max,base,pole_position, order_of_pole, mpfr_prec_t prec):
     a=RealField(2*prec)(pole_position)
     b=RealField(2*prec)(base)
     if (a==0):
@@ -515,7 +514,7 @@ cpdef simple_or_double_pole_integral(x_power_max,base,pole_position, order_of_po
     free(result)
     return result_py
 
-cdef mpfr_t* pole_integral_c(x_power_max,base, pole_position, order_of_pole, mp_prec_t prec):
+cdef mpfr_t* pole_integral_c(x_power_max,base, pole_position, order_of_pole, mpfr_prec_t prec):
     a=RealField(2*prec)(pole_position)
     b=RealField(2*prec)(base)
     if a<0:
